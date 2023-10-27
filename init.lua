@@ -48,6 +48,9 @@ require('packer').startup(function(use)
     end,
   }
 
+  -- tmux and split window navigation
+  use 'christoomey/vim-tmux-navigator'
+
   use { -- Additional text objects via treesitter
     'nvim-treesitter/nvim-treesitter-textobjects',
     after = 'nvim-treesitter',
@@ -57,8 +60,14 @@ require('packer').startup(function(use)
   use 'tpope/vim-fugitive'
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
+  use 'f-person/git-blame.nvim'
 
-  use 'nvim-lualine/lualine.nvim' -- Fancier statusline
+  use 'nvim-tree/nvim-web-devicons'
+  use {
+    'nvim-lualine/lualine.nvim', -- Fancier statusline
+    requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+  }
+
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
   use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
   use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
@@ -180,12 +189,20 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- Set lualine as statusline
 -- See `:help lualine.txt`
 require('lualine').setup {
+  sections ={
+    lualine_c = {
+      {
+        'filename',
+        path = 1
+      }
+    }
+  },
   options = {
-    icons_enabled = false,
+    icons_enabled = true,
     theme = 'catppuccin',
     component_separators = '|',
     section_separators = '',
-  },
+  }
 }
 
 -- Enable Comment.nvim
@@ -194,7 +211,7 @@ require('Comment').setup()
 -- Enable `lukas-reineke/indent-blankline.nvim`
 -- See `:help indent_blankline.txt`
 require('indent_blankline').setup {
-  char = '┊',
+  char = '‚îä',
   show_trailing_blankline_indent = false,
 }
 
@@ -205,7 +222,7 @@ require('gitsigns').setup {
     add = { text = '+' },
     change = { text = '~' },
     delete = { text = '_' },
-    topdelete = { text = '‾' },
+    topdelete = { text = '‚Äæ' },
     changedelete = { text = '~' },
   },
 }
@@ -248,7 +265,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'vim' },
 
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
@@ -317,6 +334,17 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 vim.keymap.set('n', '<C-h>', ':tabp<CR>')
 vim.keymap.set('n', '<C-l>', ':tabn<CR>')
 
+-- QuickFix navigation keymaps
+vim.keymap.set('n', '<C-j>', ':cn<CR>')
+vim.keymap.set('n', '<C-k>', ':cp<CR>')
+
+-- Panes navigation keymaps
+vim.g.tmux_navigator_no_mappings = 1
+vim.keymap.set('n', '<C-w>h', ':TmuxNavigateLeft<CR>')
+vim.keymap.set('n', '<C-w>j', ':TmuxNavigateDown<CR>')
+vim.keymap.set('n', '<C-w>k', ':TmuxNavigateUp<CR>')
+vim.keymap.set('n', '<C-w>l', ':TmuxNavigateRight<CR>')
+
 -- File explorer keymaps
 vim.keymap.set('n', '<C-f>', ':NvimTreeToggle<CR>')
 
@@ -349,7 +377,6 @@ local on_attach = function(_, bufnr)
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
   nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -449,9 +476,9 @@ cmp.setup {
 }
 
 require('catppuccin').setup({
-	color_overrides = {
-		mocha = { base = "#1E1E2E" }
-	}
+    color_overrides = {
+        mocha = { base = "#1E1E2E" }
+    }
 })
 
 require('nvim-tree').setup()
