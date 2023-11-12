@@ -211,7 +211,7 @@ require('Comment').setup()
 -- Enable `lukas-reineke/indent-blankline.nvim`
 -- See `:help indent_blankline.txt`
 require('indent_blankline').setup {
-  char = '‚îä',
+  char = '┊',
   show_trailing_blankline_indent = false,
 }
 
@@ -222,7 +222,7 @@ require('gitsigns').setup {
     add = { text = '+' },
     change = { text = '~' },
     delete = { text = '_' },
-    topdelete = { text = '‚Äæ' },
+    topdelete = { text = '‾' },
     changedelete = { text = '~' },
   },
 }
